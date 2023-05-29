@@ -37,7 +37,7 @@ export default function Selection(props) {
             </select>
 
             <button>Mute</button>
-            <button onClick={props.startChords}>Start</button>
+            <button id="start_stop_button" onClick={props.startStopChords}>Start</button>
         </div>
     )
 }

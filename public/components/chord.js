@@ -1,5 +1,5 @@
 export default function Chord(props) {
     return(
-        <h>{props.chord}</h>
+        <h1>{props.chord}</h1>
     )
 }
