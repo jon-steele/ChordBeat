@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ReactDOM } from "react";
 
 // Next Imports
@@ -30,7 +30,7 @@ export default function ChordBeat() {
   const softSound = new Audio("audio/soft.wav");
   const hardSound = new Audio("audio/hard.wav");
 
-  const timer = new Timer(playClick, 60000 / bpm, { immediate: true });
+  const timer = useRef(new Timer(playClick, 60000 / bpm, { immediate: true }));
   let count = 0;
 
   function playClick() {
@@ -52,24 +52,16 @@ export default function ChordBeat() {
   }
 
   function startStopChords() {
-    console.log("FUNCTION INITIATED " + is_running);
     if (!is_running) {
-      console.log("WE WERE NOT RUNNING, BUT ARE NOW");
       setIsRunning(true);
-      timer.start();
+      timer.current.start();
       document.querySelector('#start_stop_button').textContent = "Stop";
     }
     else {
-      console.log("WE WERE RUNNING, BUT AREN'T NOW");
-      timer.stop();
+      timer.current.stop();
       setIsRunning(false);
       document.querySelector('#start_stop_button').textContent = "Start";
     }
-    // else {
-    //   timer.stop();
-    //   is_running = false;
-    //   document.querySelector('#start_stop_button').textContent = "Start";
-    // }
   }
 
   function getChord(array) {
@@ -129,13 +121,10 @@ export default function ChordBeat() {
         <title>ChordBeat</title>
       </Head>
 
-      <body>
-        <header className="w-screen text-center"> ChordBeat </header>
-        <main className="h-screen">
-          <Selection startStopChords={startStopChords} />
-          <Chord chord={chord} />
-        </main>
-      </body>
+      <h1 className="w-screen text-center"> ChordBeat </h1>
+      <Selection startStopChords={startStopChords} />
+      <Chord chord={chord} />
+
     </div>
   );
 }
