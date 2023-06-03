@@ -14,6 +14,7 @@ import Chord from "../public/components/chord";
 
 // Parent React Component
 export default function ChordBeat() {
+
   // Selection Variables
   const [bpm, setBpm] = useState(100);
   const [key, setKey] = useState("C Major");
@@ -21,10 +22,10 @@ export default function ChordBeat() {
   const [colour, setColour] = useState("red");
 
   const [start, setStart] = useState(0);
-  const [chord, setChord] = useState("G Major");
+  const [chord, setChord] = useState(1);
   const chords = [];
 
-  chords.push("G Major", "C Major", "F Major");
+  chords.push(1, 2, 3, 4, 5, 6, 7);
   const [is_running, setIsRunning] = useState(false);
 
   const softSound = new Audio("audio/soft.wav");
@@ -64,8 +65,12 @@ export default function ChordBeat() {
   }
 
   function getChord(array) {
-    let randomIndex = Math.floor(Math.random() * array.length);
-    setChord(array[randomIndex]);
+    import("../public/scripts/functions").then((module) => {
+      const nextChord = module.nextChord;
+      setChord(nextChord(chord));
+    }).catch((error) => {
+      console.error("Error while importing functions:", error);
+    });
   }
 
   // An accurate timer constructor function
