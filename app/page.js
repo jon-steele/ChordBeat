@@ -12,11 +12,17 @@ import Script from "next/script";
 import Selection from "../public/components/selection";
 import Chord from "../public/components/chord";
 
-import { nextChord } from "../public/scripts/functions";
+import {
+  nextChord,
+  intToChord,
+  playClick,
+  startStopChords,
+  getChord,
+  Timer,
+} from "../public/scripts/functions";
 
 // Parent React Component
 export default function ChordBeat() {
-
   // Selection Variables
   const [bpm, setBpm] = useState(100);
   const [tonic, setTonic] = useState("C");
@@ -35,6 +41,19 @@ export default function ChordBeat() {
   const timer = useRef(new Timer(playClick, 60000 / bpm, { immediate: true }));
   let count = 0;
 
+  // Whenever BPM or beats per measure are updated, we can adjust our timer
+  useEffect(() => {
+    timer.current = new Timer(playClick, 60000 / bpm, { immediate: true });
+
+    // Cleanup function
+    return () => {
+      // Clean up the timer when the component unmounts
+      setIsRunning(false);
+      document.querySelector("#start_stop_button").textContent = "Start";
+      timer.current.stop();
+    };
+  }, [bpm, beatspermeasure, tonic, key]);
+
   function playClick() {
     if (count == beatspermeasure) {
       count = 0;
@@ -48,9 +67,12 @@ export default function ChordBeat() {
       softSound.play();
       softSound.currentTime = 0;
       setColour("slate");
-
     }
     count++;
+  }
+
+  function getChord(chord) {
+    setChord(nextChord(chord));
   }
 
   function startStopChords() {
@@ -65,11 +87,6 @@ export default function ChordBeat() {
     }
   }
 
-  function getChord(chord) {
-      setChord(nextChord(chord));
-  }
-
-  // An accurate timer constructor function
   function Timer(callback, timeInterval, options) {
     this.timeInterval = timeInterval;
 
@@ -111,28 +128,24 @@ export default function ChordBeat() {
     };
   }
 
-  // Whenever BPM or beats per measure are updated, we can adjust our timer
-  useEffect(() => {
-    timer.current = new Timer(playClick, 60000 / bpm, { immediate: true });
-
-    // Cleanup function
-    return () => {
-      // Clean up the timer when the component unmounts
-      setIsRunning(false);
-      document.querySelector("#start_stop_button").textContent = "Start";
-      timer.current.stop();
-    };
-  }, [bpm, beatspermeasure, tonic, key]);
-
   return (
-    <div>
+    <div className="h-screen flex flex-col text-center">
       <Head>
         <title>ChordBeat</title>
       </Head>
 
       <h1 className="w-screen text-center"> ChordBeat </h1>
-      <Selection startStopChords={startStopChords} bpm={bpm} setBpm={setBpm} beatspermeasure={beatspermeasure} setBeatsPerMeasure={setBeatsPerMeasure} key={key} setKey={setKey} 
-      tonic={tonic} setTonic={setTonic} />
+      <Selection
+        startStopChords={startStopChords}
+        bpm={bpm}
+        setBpm={setBpm}
+        beatspermeasure={beatspermeasure}
+        setBeatsPerMeasure={setBeatsPerMeasure}
+        key={key}
+        setKey={setKey}
+        tonic={tonic}
+        setTonic={setTonic}
+      />
       <Chord id="chord" chord={chord} colour={colour} />
     </div>
   );

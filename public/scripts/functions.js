@@ -28,12 +28,3 @@ export function nextChord(current) {
     const randomIndex = Math.floor(Math.random() * possibilities.length);
     return possibilities[randomIndex];
   }
-  
-  export function intToChord(chord, key, tonic){
-    if (key = "Major"){
-        
-    }
-    else {
-
-    }
-  }
