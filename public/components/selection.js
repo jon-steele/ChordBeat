@@ -2,31 +2,24 @@ export default function Selection(props) {
     return(
         <div className="flex flex-col w-screen items-center">
 
-            <select id="key">
-                <option value="cmajor">C Major</option>
-                <option value="cminor">C Minor</option>
-                <option value="csharpmajor">C# Major / Db Major</option>
-                <option value="csharpminor">C# Minor / Db Minor</option>
-                <option value="dmajor">D Major</option>
-                <option value="dminor">D Minor</option>
-                <option value="dsharpmajor">D# Major / Eb Major</option>
-                <option value="dsharpminor">D# Minor / Eb Minor</option>
-                <option value="emajor">E Major</option>
-                <option value="eminor">E Minor</option>
-                <option value="fmajor">F Major</option>
-                <option value="fminor">F Minor</option>
-                <option value="fsharpmajor">F# Major / Gb Major</option>
-                <option value="fsharpminor">F# Minor / Gb Minor</option>
-                <option value="gmajor">G Major</option>
-                <option value="gminor">G Minor</option>
-                <option value="gsharpmajor">G# Major / Ab Major</option>
-                <option value="gsharpminor">G# Minor / Ab Minor</option>
-                <option value="amajor">A Major</option>
-                <option value="aminor">A Minor</option>
-                <option value="asharpmajor">A# Major / Bb Major</option>
-                <option value="asharpminor">A# Minor / Bb Minor</option>
-                <option value="bmajor">B Major</option>
-                <option value="bminor">B Minor</option>
+            <select value={props.tonic} onChange={props.handleTonicChange}>
+                <option>C</option>
+                <option>C#</option>
+                <option>D</option>
+                <option>D#</option>
+                <option>E</option>
+                <option>F</option>
+                <option>F#</option>
+                <option>G</option>
+                <option>G#</option>
+                <option>A</option>
+                <option>A#</option>
+                <option>B</option>
+            </select>
+
+            <select value={props.key} onChange={props.handleKeyChange}>
+                <option>Major</option>
+                <option>Minor</option>
             </select>
 
             <label>Beats Per Minute: </label>
