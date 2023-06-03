@@ -29,3 +29,11 @@ export function nextChord(current) {
     return possibilities[randomIndex];
   }
   
+  export function intToChord(chord, key, tonic){
+    if (key = "Major"){
+        
+    }
+    else {
+
+    }
+  }
