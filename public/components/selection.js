@@ -1,6 +1,6 @@
 export default function Selection(props) {
     return(
-        <div className="flex w-screen justify-center items-center">
+        <div className="flex flex-col w-screen items-center">
 
             <select id="key">
                 <option value="cmajor">C Major</option>
@@ -29,14 +29,14 @@ export default function Selection(props) {
                 <option value="bminor">B Minor</option>
             </select>
 
+            <label>Beats Per Minute: </label>
             <input type="range" min={40} max={200} id="bpm" value={parseInt(props.bpm)} onChange={(event) => props.setBpm(parseInt(event.target.value))}></input>
+            <span>{props.bpm}</span>
 
-            <select id="time">
-                <option value="44">4/4</option>
-                <option value="34">3/4</option>
-            </select>
+            <label>Beats Per Measure: </label>
+            <input type="range" min={1} max={12} id="beatspermeasure" value={parseInt(props.beatspermeasure)} onChange={(event) => props.setBeatsPerMeasure(parseInt(event.target.value))}></input>
+            <span>{props.beatspermeasure}</span>
 
-            <button>Mute</button>
             <button id="start_stop_button" onClick={props.startStopChords}>Start</button>
         </div>
     )

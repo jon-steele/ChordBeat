@@ -1,5 +1,7 @@
 export default function Chord(props) {
     return(
-        <h1>{props.chord}</h1>
+        <div>
+            <h1 className={`bg-${props.colour}-500`}>{props.chord}</h1>
+        </div>
     )
 }

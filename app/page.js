@@ -17,11 +17,13 @@ export default function ChordBeat() {
   // Selection Variables
   const [bpm, setBpm] = useState(100);
   const [key, setKey] = useState("C Major");
-  const [beatspermeasure, setTimesignature] = useState(4);
-  const [mute, setMute] = useState(0);
+  const [beatspermeasure, setBeatsPerMeasure] = useState(4);
+  const [colour, setColour] = useState("red");
+
   const [start, setStart] = useState(0);
   const [chord, setChord] = useState("G Major");
   const chords = [];
+
   chords.push("G Major", "C Major", "F Major");
   const [is_running, setIsRunning] = useState(false);
 
@@ -39,9 +41,12 @@ export default function ChordBeat() {
       hardSound.play();
       hardSound.currentTime = 0;
       getChord(chords);
+      setColour("blue");
     } else {
       softSound.play();
       softSound.currentTime = 0;
+      setColour("slate");
+
     }
     count++;
   }
@@ -105,22 +110,8 @@ export default function ChordBeat() {
     };
   }
 
-  // Whenever BPM is updated, we can adjust our timer
+  // Whenever BPM or beats per measure are updated, we can adjust our timer
   useEffect(() => {
-    function playClick() {
-      if (count == beatspermeasure) {
-        count = 0;
-      }
-      if (count === 0) {
-        hardSound.play();
-        hardSound.currentTime = 0;
-        getChord(chords);
-      } else {
-        softSound.play();
-        softSound.currentTime = 0;
-      }
-      count++;
-    }
     timer.current = new Timer(playClick, 60000 / bpm, { immediate: true });
 
     // Cleanup function
@@ -130,7 +121,7 @@ export default function ChordBeat() {
       document.querySelector("#start_stop_button").textContent = "Start";
       timer.current.stop();
     };
-  }, [bpm]);
+  }, [bpm, beatspermeasure]);
 
   return (
     <div>
@@ -139,8 +130,8 @@ export default function ChordBeat() {
       </Head>
 
       <h1 className="w-screen text-center"> ChordBeat </h1>
-      <Selection startStopChords={startStopChords} bpm={bpm} setBpm={setBpm} />
-      <Chord chord={chord} />
+      <Selection startStopChords={startStopChords} bpm={bpm} setBpm={setBpm} beatspermeasure={beatspermeasure} setBeatsPerMeasure={setBeatsPerMeasure} />
+      <Chord id="chord" chord={chord} colour={colour} />
     </div>
   );
 }
