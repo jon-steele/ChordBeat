@@ -32,16 +32,14 @@ export default function ChordBeat() {
   let count = 0;
 
   function playClick() {
-
-    if (count == beatspermeasure){
+    if (count == beatspermeasure) {
       count = 0;
     }
-    if (count === 0){
+    if (count === 0) {
       hardSound.play();
       hardSound.currentTime = 0;
       getChord(chords);
-    }
-    else {
+    } else {
       softSound.play();
       softSound.currentTime = 0;
     }
@@ -52,12 +50,11 @@ export default function ChordBeat() {
     if (!is_running) {
       setIsRunning(true);
       timer.current.start();
-      document.querySelector('#start_stop_button').textContent = "Stop";
-    }
-    else {
+      document.querySelector("#start_stop_button").textContent = "Stop";
+    } else {
       timer.current.stop();
       setIsRunning(false);
-      document.querySelector('#start_stop_button').textContent = "Start";
+      document.querySelector("#start_stop_button").textContent = "Start";
     }
   }
 
@@ -111,20 +108,17 @@ export default function ChordBeat() {
   // Whenever BPM is updated, we can adjust our timer
   useEffect(() => {
     function playClick() {
-
-      if (count == beatspermeasure){
+      if (count == beatspermeasure) {
         count = 0;
       }
-      if (count === 0){
+      if (count === 0) {
         hardSound.play();
         hardSound.currentTime = 0;
         getChord(chords);
-      }
-      else {
+      } else {
         softSound.play();
         softSound.currentTime = 0;
       }
-      console.log(count);
       count++;
     }
     timer.current = new Timer(playClick, 60000 / bpm, { immediate: true });
@@ -132,6 +126,8 @@ export default function ChordBeat() {
     // Cleanup function
     return () => {
       // Clean up the timer when the component unmounts
+      setIsRunning(false);
+      document.querySelector("#start_stop_button").textContent = "Start";
       timer.current.stop();
     };
   }, [bpm]);
@@ -145,7 +141,6 @@ export default function ChordBeat() {
       <h1 className="w-screen text-center"> ChordBeat </h1>
       <Selection startStopChords={startStopChords} bpm={bpm} setBpm={setBpm} />
       <Chord chord={chord} />
-
     </div>
   );
 }
