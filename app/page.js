@@ -1,7 +1,7 @@
 "use client";
 
 // React Imports
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ReactDOM } from "react";
 
 // Next Imports
@@ -11,8 +11,6 @@ import Script from "next/script";
 // React Component Imports
 import Selection from "../public/components/selection";
 import Chord from "../public/components/chord";
-
-// Script
 
 // Parent React Component
 export default function ChordBeat() {
@@ -47,7 +45,6 @@ export default function ChordBeat() {
       softSound.play();
       softSound.currentTime = 0;
     }
-    console.log(count);
     count++;
   }
 
@@ -69,7 +66,6 @@ export default function ChordBeat() {
     setChord(array[randomIndex]);
   }
 
-  // Stolen from: https://github.com/musicandcode/Metronome/blob/main/timer.js
   // An accurate timer constructor function
   function Timer(callback, timeInterval, options) {
     this.timeInterval = timeInterval;
@@ -95,7 +91,6 @@ export default function ChordBeat() {
     };
     // Round method that takes care of running the callback and adjusting the time
     this.round = () => {
-      console.log("timeout", this.timeout);
       // The drift will be the current moment in time for this round minus the expected time..
       let drift = Date.now() - this.expected;
       // Run error callback if drift is greater than time interval, and if the callback is provided
@@ -108,12 +103,38 @@ export default function ChordBeat() {
       callback();
       // Increment expected time by time interval for every round after running the callback function.
       this.expected += this.timeInterval;
-      console.log("Drift:", drift);
-      console.log("Next round time interval:", this.timeInterval - drift);
       // Run timeout again and set the timeInterval of the next iteration to the original time interval minus the drift.
       this.timeout = setTimeout(this.round, this.timeInterval - drift);
     };
   }
+
+  // Whenever BPM is updated, we can adjust our timer
+  useEffect(() => {
+    function playClick() {
+
+      if (count == beatspermeasure){
+        count = 0;
+      }
+      if (count === 0){
+        hardSound.play();
+        hardSound.currentTime = 0;
+        getChord(chords);
+      }
+      else {
+        softSound.play();
+        softSound.currentTime = 0;
+      }
+      console.log(count);
+      count++;
+    }
+    timer.current = new Timer(playClick, 60000 / bpm, { immediate: true });
+
+    // Cleanup function
+    return () => {
+      // Clean up the timer when the component unmounts
+      timer.current.stop();
+    };
+  }, [bpm]);
 
   return (
     <div>
@@ -122,7 +143,7 @@ export default function ChordBeat() {
       </Head>
 
       <h1 className="w-screen text-center"> ChordBeat </h1>
-      <Selection startStopChords={startStopChords} />
+      <Selection startStopChords={startStopChords} bpm={bpm} setBpm={setBpm} />
       <Chord chord={chord} />
 
     </div>

@@ -29,7 +29,7 @@ export default function Selection(props) {
                 <option value="bminor">B Minor</option>
             </select>
 
-            <input type="range" min={40} max={200} id="bpm"></input>
+            <input type="range" min={40} max={200} id="bpm" value={parseInt(props.bpm)} onChange={(event) => props.setBpm(parseInt(event.target.value))}></input>
 
             <select id="time">
                 <option value="44">4/4</option>
