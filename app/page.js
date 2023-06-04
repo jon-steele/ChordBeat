@@ -68,7 +68,7 @@ export default function ChordBeat() {
   function getChord(chord) {
     next = nextChord(chord);
     setChord(next);
-    setChordName(parseChord(next, "Major", tonic));
+    setChordName(parseChord(next, "Major", tonic, accidental));
   }
 
   function startStopChords() {

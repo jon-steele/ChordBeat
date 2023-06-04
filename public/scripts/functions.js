@@ -30,7 +30,8 @@ export function nextChord(current) {
   }
 
   // parseChord will return the chord, given a tonic, key, and number
-  export function parseChord(number, key, tonic){
+  export function parseChord(number, key, tonic, accidental){
+    let notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     let note = tonic.charCodeAt(0) + (number - 1);
     if (note > 71)
       note = note - 7;
