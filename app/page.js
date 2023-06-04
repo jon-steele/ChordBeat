@@ -12,7 +12,7 @@ import Script from "next/script";
 import Selection from "../public/components/selection";
 import Chord from "../public/components/chord";
 
-import { nextChord } from "../public/scripts/functions";
+import { nextChord, parseChord } from "../public/scripts/functions";
 
 // Parent React Component
 export default function ChordBeat() {
@@ -24,6 +24,7 @@ export default function ChordBeat() {
   const [colour, setColour] = useState("red");
   const [start, setStart] = useState(0);
   const [chord, setChord] = useState(1);
+  const [chordName, setChordName] = useState(1);
   const [is_running, setIsRunning] = useState(false);
 
   const softSound = new Audio("audio/soft.wav");
@@ -62,8 +63,11 @@ export default function ChordBeat() {
     count++;
   }
 
+  // getChord will pick the next random chord, and update it on screen.
   function getChord(chord) {
-    setChord(nextChord(chord));
+    next = nextChord(chord);
+    setChord(next);
+    setChordName(parseChord(next, "Major", tonic));
   }
 
   function startStopChords() {
@@ -121,11 +125,9 @@ export default function ChordBeat() {
 
   return (
     <div className="h-screen flex flex-col text-center">
-      <Head>
-        <title>ChordBeat</title>
-      </Head>
 
       <h1 className="w-screen text-center"> ChordBeat </h1>
+
       <Selection
         startStopChords={startStopChords}
         bpm={bpm}
@@ -137,7 +139,12 @@ export default function ChordBeat() {
         tonic={tonic}
         setTonic={setTonic}
       />
-      <Chord id="chord" chord={chord} colour={colour} />
+      <Chord
+        className="h-full flex justify-center items-center"
+        chordName={chordName} 
+        colour={colour} 
+      />
+
     </div>
   );
 }

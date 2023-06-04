@@ -28,3 +28,15 @@ export function nextChord(current) {
     const randomIndex = Math.floor(Math.random() * possibilities.length);
     return possibilities[randomIndex];
   }
+
+  // parseChord will return the chord, given a tonic, key, and number
+  export function parseChord(number, key, tonic){
+    let note = tonic.charCodeAt(0) + (number - 1);
+    if (note > 71)
+      note = note - 7;
+    
+    if (number == 1 || number == 4 || number == 5)
+      return (String.fromCharCode(note) + " major");
+    else
+      return ((String.fromCharCode(note)).toLowerCase() + " minor");
+  }
