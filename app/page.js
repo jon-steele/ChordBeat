@@ -19,7 +19,8 @@ export default function ChordBeat() {
   // Selection Variables
   const [bpm, setBpm] = useState(100);
   const [tonic, setTonic] = useState("C");
-  const [key, setKey] = useState("Major");
+  const [accidental, setAccidental] = useState("");
+  const [chordKey, setChordKey] = useState("Major");
   const [beatspermeasure, setBeatsPerMeasure] = useState(4);
   const [colour, setColour] = useState("red");
   const [start, setStart] = useState(0);
@@ -44,7 +45,7 @@ export default function ChordBeat() {
       document.querySelector("#start_stop_button").textContent = "Start";
       timer.current.stop();
     };
-  }, [bpm, beatspermeasure, tonic, key]);
+  }, [bpm, beatspermeasure, tonic, chordKey, accidental]);
 
   function playClick() {
     if (count == beatspermeasure) {
@@ -134,10 +135,12 @@ export default function ChordBeat() {
         setBpm={setBpm}
         beatspermeasure={beatspermeasure}
         setBeatsPerMeasure={setBeatsPerMeasure}
-        key={key}
-        setKey={setKey}
+        chordKey={chordKey}
+        setChordKey={setChordKey}
         tonic={tonic}
         setTonic={setTonic}
+        accidental={accidental}
+        setAccidental={setAccidental}
       />
       <Chord
         className="h-full flex justify-center items-center"
