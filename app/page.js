@@ -12,14 +12,7 @@ import Script from "next/script";
 import Selection from "../public/components/selection";
 import Chord from "../public/components/chord";
 
-import {
-  nextChord,
-  intToChord,
-  playClick,
-  startStopChords,
-  getChord,
-  Timer,
-} from "../public/scripts/functions";
+import { nextChord } from "../public/scripts/functions";
 
 // Parent React Component
 export default function ChordBeat() {
@@ -29,10 +22,8 @@ export default function ChordBeat() {
   const [key, setKey] = useState("Major");
   const [beatspermeasure, setBeatsPerMeasure] = useState(4);
   const [colour, setColour] = useState("red");
-
   const [start, setStart] = useState(0);
   const [chord, setChord] = useState(1);
-
   const [is_running, setIsRunning] = useState(false);
 
   const softSound = new Audio("audio/soft.wav");
