@@ -1,113 +1,153 @@
-import Image from 'next/image'
+"use client";
 
-export default function Home() {
+// React Imports
+import { useState, useRef, useEffect } from "react";
+import { ReactDOM } from "react";
+
+// Next Imports
+import Head from "next/head";
+import Script from "next/script";
+
+// React Component Imports
+import Selection from "../public/components/selection";
+import Chord from "../public/components/chord";
+
+import { nextChord, parseChord } from "../public/scripts/functions";
+
+// Parent React Component
+export default function ChordBeat() {
+  // Selection Variables
+  const [bpm, setBpm] = useState(100);
+  const [tonic, setTonic] = useState("C");
+  const [accidental, setAccidental] = useState("");
+  const [chordKey, setChordKey] = useState("Major");
+  const [beatspermeasure, setBeatsPerMeasure] = useState(4);
+  const [colour, setColour] = useState("red");
+  const [start, setStart] = useState(0);
+  const [chord, setChord] = useState(1);
+  const [chordName, setChordName] = useState(1);
+  const [is_running, setIsRunning] = useState(false);
+
+  const softSound = new Audio("audio/soft.wav");
+  const hardSound = new Audio("audio/hard.wav");
+
+  const timer = useRef(new Timer(playClick, 60000 / bpm, { immediate: true }));
+  let count = 0;
+
+  // Whenever BPM or beats per measure are updated, we can adjust our timer
+  useEffect(() => {
+    timer.current = new Timer(playClick, 60000 / bpm, { immediate: true });
+
+    // Cleanup function
+    return () => {
+      // Clean up the timer when the component unmounts
+      setIsRunning(false);
+      document.querySelector("#start_stop_button").textContent = "Start";
+      timer.current.stop();
+    };
+  }, [bpm, beatspermeasure, tonic, chordKey, accidental]);
+
+  function playClick() {
+    if (count == beatspermeasure) {
+      count = 0;
+    }
+    if (count === 0) {
+      hardSound.play();
+      hardSound.currentTime = 0;
+      getChord(chord);
+      setColour("blue");
+    } else {
+      softSound.play();
+      softSound.currentTime = 0;
+      setColour("slate");
+    }
+    count++;
+  }
+
+  // getChord will pick the next random chord, and update it on screen.
+  function getChord(chord) {
+    next = nextChord(chord);
+    setChord(next);
+    setChordName(parseChord(next, "Major", tonic, accidental));
+  }
+
+  function startStopChords() {
+    if (!is_running) {
+      setIsRunning(true);
+      timer.current.start();
+      document.querySelector("#start_stop_button").textContent = "Stop";
+    } else {
+      timer.current.stop();
+      setIsRunning(false);
+      document.querySelector("#start_stop_button").textContent = "Start";
+    }
+  }
+
+  function Timer(callback, timeInterval, options) {
+    this.timeInterval = timeInterval;
+
+    // Add method to start timer
+    this.start = () => {
+      // Set the expected time. The moment in time we start the timer plus whatever the time interval is.
+      this.expected = Date.now() + this.timeInterval;
+      // Start the timeout and save the id in a property, so we can cancel it later
+      this.theTimeout = null;
+
+      if (options.immediate) {
+        callback();
+      }
+
+      this.timeout = setTimeout(this.round, this.timeInterval);
+      console.log("Timer Started");
+    };
+    // Add method to stop timer
+    this.stop = () => {
+      clearTimeout(this.timeout);
+      console.log("Timer Stopped");
+    };
+    // Round method that takes care of running the callback and adjusting the time
+    this.round = () => {
+      // The drift will be the current moment in time for this round minus the expected time..
+      let drift = Date.now() - this.expected;
+      // Run error callback if drift is greater than time interval, and if the callback is provided
+      if (drift > this.timeInterval) {
+        // If error callback is provided
+        if (options.errorCallback) {
+          options.errorCallback();
+        }
+      }
+      callback();
+      // Increment expected time by time interval for every round after running the callback function.
+      this.expected += this.timeInterval;
+      // Run timeout again and set the timeInterval of the next iteration to the original time interval minus the drift.
+      this.timeout = setTimeout(this.round, this.timeInterval - drift);
+    };
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div className="h-screen flex flex-col text-center">
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      <h1 className="w-screen text-center"> ChordBeat </h1>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+      <Selection
+        startStopChords={startStopChords}
+        bpm={bpm}
+        setBpm={setBpm}
+        beatspermeasure={beatspermeasure}
+        setBeatsPerMeasure={setBeatsPerMeasure}
+        chordKey={chordKey}
+        setChordKey={setChordKey}
+        tonic={tonic}
+        setTonic={setTonic}
+        accidental={accidental}
+        setAccidental={setAccidental}
+      />
+      <Chord
+        className="h-full flex justify-center items-center"
+        chordName={chordName} 
+        colour={colour} 
+      />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
